@@ -7,6 +7,21 @@ function get_db_connect()
 	return $db;
 }
 
+function get_redis_connect()
+{
+	try 
+	{
+		$redis = new Redis();
+		$redis->connect('127.0.0.1', 6379 );
+		return $redis;
+	}
+	catch (Exception $e) {
+	    die($e->getMessage());
+	    return false;
+	}
+}
+
+
 function get_user_list($db,$status = 1)
 {
 	$result = array();
@@ -50,4 +65,64 @@ function get_user_by_id($db,$id)
 	}
 	return false;
 }
+
+function get_event_list($db)
+{
+	$result = array();
+	$query = $db->prepare("select * from event");
+	$query->bindParam(":status", $status,PDO::PARAM_INT);
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		array_push($result, $row);
+	}
+	return $result;
+}
+
+function create_event($db, $name, $place)
+{
+	$query = $db->prepare("insert into event (`name`, `place`) values(:name,:place)");
+	$query->bindParam(":name", $name);
+	$query->bindParam(":place",$place);
+	$query->execute();
+}
+
+function edit_event($db, $name,$place,$id)
+{
+	$query = $db->prepare("update event set `name` = :name, `place`=:place where `id`=:id");
+	$query->bindParam(":name",$name);
+	$query->bindParam(":place", $place);
+	$query->bindParam(":id",$id);
+	$query->execute();
+}
+
+function get_event_by_id($db, $id)
+{
+	$query = $db->prepare("select * from event where id=:id");
+	$query->bindParam(":id", $id,PDO::PARAM_INT);
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		return $row;
+	}
+	return false;
+}
+
+function add_event_to_user($db, $id_event, $id_user)
+{
+	$query = $db->prepare("insert into user_event (`id_user`,`id_event`) values (:id_user,:id_event)");
+	$query->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+	$query->bindParam(":id_event", $id_event, PDO::PARAM_INT);
+	$query->execute();
+}
+
+function delete_event_from_user($db, $id_event, $id_user)
+{
+	$query = $db->prepare("delete user_event where `id_user`=:id_user and `id_event`=:id_event");
+	$query->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+	$query->bindParam(":id_event", $id_event, PDO::PARAM_INT);
+	$query->execute();
+}
+
+
 ?>

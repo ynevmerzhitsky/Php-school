@@ -6,7 +6,7 @@ $result = mysqli_query($db,'select * from user');
 while ($row = mysqli_fetch_assoc($result)) {
 	var_dump($row);
 }*/
-include 'library/db.php';
+require_once 'library/db.php';
 include 'header.html';
 require_once 'greeting.php';
 require_once 'user.php';
