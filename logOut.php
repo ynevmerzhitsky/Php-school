@@ -9,7 +9,7 @@
 	{
 		$_SESSION['isLogin'] = false;
 		//session_regenerate_id(FALSE);
-		session_unset();
+		//session_unset();
 		header('Location: ' .$_SERVER['PHP_SELF']);
 	}
 ?>

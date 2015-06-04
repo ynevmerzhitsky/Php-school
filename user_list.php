@@ -1,7 +1,14 @@
 <?php
-include 'library/db.php';
+require_once 'library/db.php';
+include 'header.html';
 $db = get_db_connect();
 $users_list = get_user_list($db);
+if(!isset($_SESSION)) 
+{ 
+	session_start(); 
+} 
+if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin']):
+	include 'logOut.php'; 
 ?>
 <table>
 <caption>Users list</caption>
@@ -20,4 +27,10 @@ $users_list = get_user_list($db);
 	</tr>
 <?php endforeach; ?>
 </table>
-<a href="create_user.php">Create new user</a>
+<?php 
+else:
+	include 'auth.php';
+endif;
+?>
+<!--<a href="create_user.php">Create new user</a> -->
+<?php include 'footer.html';?>

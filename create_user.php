@@ -1,5 +1,6 @@
 <?php
 include 'library/db.php';
+include 'registration_form.html';
 if(array_key_exists('add_button', $_POST))
 {
 	create();
@@ -10,12 +11,3 @@ function create()
 	header("Location: /user_list.php");
 }
 ?>
-<form method="post">
-Name:<br>
-<input type="text" name="name"><br/>
-Password:<br/>
-<input type="password" name="password"><br/>
-E-mail:<br/>
-<input type="text" name="email"><br/>
-<input type="submit" name="add_button" value="AddUser">
-</form>

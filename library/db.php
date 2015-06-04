@@ -66,6 +66,19 @@ function get_user_by_id($db,$id)
 	return false;
 }
 
+function check_user($db, $login,$password)
+{
+	$query = $db->prepare("select * from user where `name`=:login and password=PASSWORD(:password)");
+	$query->bindParam(":login", $login,PDO::PARAM_INT);
+	$query->bindParam(":password",$password);
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		return $row;
+	}
+	return false;
+}
+
 function get_event_list($db)
 {
 	$result = array();
@@ -79,11 +92,12 @@ function get_event_list($db)
 	return $result;
 }
 
-function create_event($db, $name, $place)
+function create_event($db, $name, $place, $price)
 {
-	$query = $db->prepare("insert into event (`name`, `place`) values(:name,:place)");
+	$query = $db->prepare("insert into event (`name`, `place`,`price`) values(:name,:place,:price)");
 	$query->bindParam(":name", $name);
 	$query->bindParam(":place",$place);
+	$query->bindParam(":price",$price);
 	$query->execute();
 }
 
@@ -124,5 +138,37 @@ function delete_event_from_user($db, $id_event, $id_user)
 	$query->execute();
 }
 
+function get_events_by_user($db,$id_user)
+{
+	$result = array();
+	$query = $db->prepare("select event.* from event, user_event where user_event.id_user=:id_user and event.id=user_event.id_event");
+	$query->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		array_push($result, $row);
+	}
+	return $result;
+}
+
+
+function is_event_in_user_list($db, $id_user,$id_event)
+{
+	$query = $db->prepare("select count(*) as count from user_event where id_user=:id_user and id_event=:id_event");
+	$query->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+	$query->bindParam(':id_event', $id_event, PDO::PARAM_INT);
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		if($row->count==0){
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	return false;
+}
 
 ?>

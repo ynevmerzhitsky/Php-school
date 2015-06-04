@@ -8,7 +8,7 @@ if(!isset($_SESSION))
 if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin'])
 {
 	include 'logOut.php';
-	echo "Count authorization: " . $_SESSION['countAuthorization'] . "<br/>";
+	//echo "Count authorization: " . $_SESSION['countAuthorization'] . "<br/>";
 }
 else
 {
