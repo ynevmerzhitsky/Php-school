@@ -1,14 +1,39 @@
 <?php
 require_once 'library/db.php';
 include 'header.html';
+$count=50;
 $db = get_db_connect();
-$users_list = get_user_list($db);
+
+
+
 if(!isset($_SESSION)) 
 { 
 	session_start(); 
 } 
 if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin']):
 	include 'logOut.php'; 
+	$count_users = get_count_users(get_db_connect());
+	$count_pages = intval($count_users/$count)+1;
+
+	if(array_key_exists('page', $_GET))
+	{
+		$page = $_GET['page'];
+	}
+	else
+	{
+		$page=1;
+	}
+
+	if($page<0 or empty($page)){
+		$page=1;
+	}
+	if($page>$count_pages){
+		$page=$count_pages;
+	}
+
+	$start = $page*$count - $count;
+	$users_list = get_user_list($db,$start,$count);
+
 ?>
 <table>
 <caption>Users list</caption>
@@ -28,6 +53,21 @@ if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin']):
 <?php endforeach; ?>
 </table>
 <?php 
+	if($page !=1):
+?>
+		<a href="user_list.php?page=1"><< </a>
+		<a href="user_list.php?page=<?=$page-1?>"><</a>
+<?php
+	endif;
+?>
+	Current page <?=$page?>
+<?php		
+	if($page !=$count_pages):
+?>
+		<a href="user_list.php?page=<?=$page+1?>"> ></a>
+		<a href="user_list.php?page=<?=$count_pages?>"> >></a>
+<?php
+	endif;
 else:
 	include 'auth.php';
 endif;

@@ -22,17 +22,30 @@ function get_redis_connect()
 }
 
 
-function get_user_list($db,$status = 1)
+function get_user_list($db,$start,$count,$status = 1)
 {
 	$result = array();
-	$query = $db->prepare("select * from user where is_active=:status");
+	$query = $db->prepare("select * from user where is_active=:status limit :start, :count");
 	$query->bindParam(":status", $status,PDO::PARAM_INT);
+	$query->bindParam(":start",$start,PDO::PARAM_INT);
+	$query->bindParam(":count",$count,PDO::PARAM_INT);
 	$query->execute();
 	while($row=$query->fetch(PDO::FETCH_OBJ))
 	{
 		array_push($result, $row);
 	}
 	return $result;
+}
+
+function get_count_users($db)
+{
+	$query=$db->prepare("select count(*) as count from user");
+	$query->execute();
+	while($row=$query->fetch(PDO::FETCH_OBJ))
+	{
+		return $row->count;
+	}
+	return false;
 }
 
 function create_user($db,$name,$password,$email)
@@ -141,7 +154,8 @@ function delete_event_from_user($db, $id_event, $id_user)
 function get_events_by_user($db,$id_user)
 {
 	$result = array();
-	$query = $db->prepare("select event.* from event, user_event where user_event.id_user=:id_user and event.id=user_event.id_event");
+	$query = $db->prepare("select t1.* from event t1 left join user_event t2 on t1.id = t2.id_event and t2.id_user=:id_user");
+
 	$query->bindParam(":id_user", $id_user, PDO::PARAM_INT);
 	$query->execute();
 	while($row=$query->fetch(PDO::FETCH_OBJ))
