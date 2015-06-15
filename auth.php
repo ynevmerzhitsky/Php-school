@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 
 if(!isset($_SESSION)){
     session_start();
@@ -16,7 +15,10 @@ $redisClient->save();
 if(array_key_exists('log_in_button', $_POST))
 {
 
-	function authorization()
+    /**
+     *
+     */
+    function authorization()
 	{
 		$redisClient = get_redis_connect();
 		if(array_key_exists('login', $_POST))

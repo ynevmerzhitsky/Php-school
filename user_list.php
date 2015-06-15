@@ -40,14 +40,12 @@ if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin']):
 <tr>
 	<th>Name</th>
 	<th>Email</th>
-	<th>Password Hash</th>
 	<th></th>
 </tr>
 <?php foreach ($users_list as $user) : ?>
 	<tr>
 		<td><?= $user->name ?></td>
 		<td><?= $user->email ?></td>
-		<td><?= $user->password ?></td>
 		<td><a href="edit_user.php?id=<?= $user->id ?>">Edit</a></td>
 	</tr>
 <?php endforeach; ?>

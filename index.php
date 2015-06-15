@@ -16,7 +16,7 @@ if(!isset($_SESSION))
 	session_start(); 
 } 
 
-if(array_key_exists('isLogin', $_SESSION)&&$_SESSION['isLogin']):
+if(array_key_exists('isLogin', $_SESSION) && $_SESSION['isLogin']):
 	include 'logOut.php';
 	echo "Hello, " . $_SESSION['login'] . "<br>";
 	$events_list_by_user = get_events_by_user(get_db_connect(),$_SESSION['id']);
